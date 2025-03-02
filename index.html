@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>语文小达人 - 拼音选择游戏</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .game-container {
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            color: #ff6f61;
+            font-size: 24px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(2, 120px);
+            grid-gap: 10px;
+            margin: 20px auto;
+        }
+        .grid div {
+            width: 120px;
+            height: 120px;
+            background-color: #ffcc00;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            color: #333;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .grid div:hover {
+            background-color: #ffb300;
+        }
+        .score {
+            font-size: 20px;
+            color: #333;
+            margin-top: 20px;
+        }
+        .emoji {
+            font-size: 30px;
+            margin-top: 10px;
+        }
+        .character {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>语文小达人 - 拼音选择游戏 🎮</h1>
+        <div class="grid" id="grid">
+            <!-- 方块内容由JavaScript动态生成 -->
+        </div>
+        <div class="score">得分: <span id="score">0</span> 🏆</div>
+        <div class="emoji" id="emoji">😊</div>
+    </div>
+
+    <script>
+        const grid = document.getElementById('grid');
+        const scoreDisplay = document.getElementById('score');
+        const emojiDisplay = document.getElementById('emoji');
+        let score = 0;
+        let currentQuestionIndex = 0;
+
+        // 题目和答案
+        const questions = [
+            { character: "豚", options: ["tún", "tú", "tùn"], correct: "tún" },
+            { character: "俐", options: ["líng", "lín", "lìng"], correct: "líng" },
+            { character: "翼", options: ["yì", "yí", "yī"], correct: "yì" },
+            { character: "漾", options: ["yàng", "yáng", "yǎn"], correct: "yàng" },
+            { character: "翩", options: ["piān", "pián", "piàn"], correct: "piān" },
+            { character: "录", options: ["lù", "lǜ", "lú"], correct: "lù" },
+            { character: "款", options: ["kuǎn", "kuán", "kuàn"], correct: "kuǎn" },
+            { character: "绸", options: ["chóu", "chōu", "chòu"], correct: "chóu" }
+        ];
+
+        // 随机打乱选项顺序
+        function shuffleOptions(options) {
+            for (let i = options.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [options[i], options[j]] = [options[j], options[i]];
+            }
+            return options;
+        }
+
+        // 显示当前题目
+        function showQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            const shuffledOptions = shuffleOptions([...currentQuestion.options]);
+            grid.innerHTML = '';
+            shuffledOptions.forEach(option => {
+                const div = document.createElement('div');
+                div.innerHTML = `<div class="character">${currentQuestion.character}</div>${option}`;
+                div.addEventListener('click', () => checkAnswer(option, currentQuestion.correct));
+                grid.appendChild(div);
+            });
+        }
+
+        // 检查答案
+        function checkAnswer(selected, correct) {
+            if (selected === correct) {
+                score += 10;
+                scoreDisplay.textContent = score;
+                emojiDisplay.textContent = "🎉 太棒了！";
+            } else {
+                emojiDisplay.textContent = "😢 再试一次！";
+            }
+            setTimeout(() => {
+                if (currentQuestionIndex < questions.length - 1) {
+                    currentQuestionIndex++;
+                    showQuestion();
+                    emojiDisplay.textContent = "😊";
+                } else {
+                    emojiDisplay.textContent = "🎮 游戏结束！";
+                    grid.innerHTML = '<div style="grid-column: span 2;">你已经完成了所有题目！</div>';
+                }
+            }, 1000);
+        }
+
+        // 初始化游戏
+        showQuestion();
+    </script>
+</body>
+</html>
